@@ -117,7 +117,7 @@ int main()
 
 	// 타이머 루프를 이용하여 퍼즐 섞기
 	auto count = 0;
-	auto timer = Timer::create(0.05f);
+	auto timer = Timer::create(0.03f);
 	timer->setOnTimerCallback([&](TimerPtr timer1)->bool {
 		cout << "timeout!!" << count << endl;
 		
@@ -140,8 +140,8 @@ int main()
 		blank = j;
 
 		count++;
-		if (count < 5) {
-			timer1->set(0.05f);
+		if (count < 15) {
+			timer1->set(0.03f);
 			timer1->start();
 		}
 		return true;
@@ -173,7 +173,7 @@ int main()
 
 	// 다음 퍼즐 타이머 루프
 	auto count1 = 0;
-	auto timer_A = Timer::create(0.05f);
+	auto timer_A = Timer::create(0.03f);
 	timer_A->setOnTimerCallback([&](TimerPtr timer2)->bool {
 		cout << "timeout!!" << count << endl;
 		int b = 0;
@@ -194,8 +194,8 @@ int main()
 		blank1 = b;
 
 		count++;
-		if (count < 5) {
-			timer2->set(0.05f);
+		if (count < 15) {
+			timer2->set(0.03f);
 			timer2->start();
 		}
 		return true;
