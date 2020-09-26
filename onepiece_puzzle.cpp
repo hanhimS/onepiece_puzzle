@@ -1,691 +1,233 @@
-﻿#include<Bangtal.h>
-#pragma comment(lib, "Bangtal.lib")
-#include <random>
-#include <iterator>
+﻿#define _CRT_SECURE_NO_WARNINGS
+#include <bangtal.h>
 #include <iostream>
+#include <ctime>
+#include <algorithm>
 
-SceneID  scene1, scene2, scene3, scene4;
-ObjectID board1[3][3], board2[3][3];
-ObjectID start, start1, a00, a01, a02, a10, a11, a12, a20, a21, b00, b01, b02, b10, b11, b12, b20, b21, blank, blank2, restart, restart1, next;
-TimerID timer;
+using namespace bangtal;
+using namespace std;
 
-ObjectID createObject(const char* name, const char* image, SceneID scene, int x, int y, bool shown) {
-	ObjectID object = createObject(image);
-	locateObject(object, scene, x, y);
-	if (shown) {
-		showObject(object);
-	}
-	return object;
-}
-
-int boardX1[3] = {
-	365, 545, 725
-};
-
-int boardY1[3] = {
-	440, 260, 80
-};
-
-int board2X[3] = {
-	372, 552, 732
-};
-
-int board2Y[3] = {
-	445, 265, 85
-};
-
-const int move = 180;
-
-auto mouseCallback(ObjectID object, int x, int y, MouseAction action) {
-	int t1;
-	int flag1 = 0;
-	int t2;
-	int flag2 = 0;
-	if (object == start) {
-		enterScene(scene2);
-		startTimer(timer);
-	}
-	if (object == restart) {
-		stopTimer(timer);
-		setTimer(timer, 600.0f);
-		enterScene(scene1);
-	}
-
-	if (object == next) {
-		enterScene(scene3);
-		stopTimer(timer);
-		setTimer(timer, 600.0f);
-	}
-
-	if (object == start1) {
-		enterScene(scene4);
-		startTimer(timer);
-	}
-	if (object == restart1) {
-		stopTimer(timer);
-		setTimer(timer, 600.0f);
-		enterScene(scene3);
-	}
-
-	for (int i = 0; i < 3; i++) {
-		if (flag1 == 1) {
-			break;
-		}
-		for (int j = 0; j < 3; j++) {
-			if (object == board1[i][j]) {
-				if (a00 == board1[0][0] && a01 == board1[0][1] && a02 == board1[0][2] && a10 == board1[1][0] && a11 == board1[1][1] && a12 == board1[1][2] && a20 == board1[2][0] && a21 == board1[2][1] && blank == board1[2][2]) {
-					showMessage("click the next button");
-				}
-				if (i == 0 && j == 0) {
-					if (board1[i][j + 1] == blank) {
-						locateObject(object, scene2, boardX1[j] + move, boardY1[i]);
-						locateObject(blank, scene2, boardX1[j], boardY1[i]);
-						t1 = board1[i][j];
-						board1[i][j] = board1[i][j + 1];
-						board1[i][j + 1] = t1;
-						flag1 = 1;
-						break;
-					}
-					else if (board1[i + 1][j] == blank) {
-						locateObject(object, scene2, boardX1[j], boardY1[i] - move);
-						locateObject(blank, scene2, boardX1[j], boardY1[i]);
-						t1 = board1[i][j];
-						board1[i][j] = board1[i + 1][j];
-						board1[i + 1][j] = t1;
-						flag1 = 1;
-						break;
-					}
-				}
-				else if (i == 0 && j == 1) {
-					if (board1[i][j - 1] == blank) {
-						locateObject(object, scene2, boardX1[j] - move, boardY1[i]);
-						locateObject(blank, scene2, boardX1[j], boardY1[i]);
-						t1 = board1[i][j];
-						board1[i][j] = board1[i][j - 1];
-						board1[i][j - 1] = t1;
-						flag1 = 1;
-						break;
-					}
-					else if (board1[i][j + 1] == blank) {
-						locateObject(object, scene2, boardX1[j] + move, boardY1[i]);
-						locateObject(blank, scene2, boardX1[j], boardY1[i]);
-						t1 = board1[i][j];
-						board1[i][j] = board1[i][j + 1];
-						board1[i][j + 1] = t1;
-						flag1 = 1;
-						break;
-					}
-					else if (board1[i + 1][j] == blank) {
-						locateObject(object, scene2, boardX1[j], boardY1[i] - move);
-						locateObject(blank, scene2, boardX1[j], boardY1[i]);
-						t1 = board1[i][j];
-						board1[i][j] = board1[i + 1][j];
-						board1[i + 1][j] = t1;
-						flag1 = 1;
-						break;
-					}
-				}
-				else if (i == 0 && j == 2) {
-					if (board1[i][j - 1] == blank) {
-						locateObject(object, scene2, boardX1[j] - move, boardY1[i]);
-						locateObject(blank, scene2, boardX1[j], boardY1[i]);
-						t1 = board1[i][j];
-						board1[i][j] = board1[i][j - 1];
-						board1[i][j - 1] = t1;
-						flag1 = 1;
-						break;
-					}
-					else if (board1[i + 1][j] == blank) {
-						locateObject(object, scene2, boardX1[j], boardY1[i] - move);
-						locateObject(blank, scene2, boardX1[j], boardY1[i]);
-						t1 = board1[i][j];
-						board1[i][j] = board1[i + 1][j];
-						board1[i + 1][j] = t1;
-						flag1 = 1;
-						break;
-					}
-				}
-
-				else if (i == 1 && j == 0) {
-					if (board1[i - 1][j] == blank) {
-						locateObject(object, scene2, boardX1[j], boardY1[i] + move);
-						locateObject(blank, scene2, boardX1[j], boardY1[i]);
-						t1 = board1[i][j];
-						board1[i][j] = board1[i - 1][j];
-						board1[i - 1][j] = t1;
-						flag1 = 1;
-						break;
-					}
-					else if (board1[i][j + 1] == blank) {
-						locateObject(object, scene2, boardX1[j] + move, boardY1[i]);
-						locateObject(blank, scene2, boardX1[j], boardY1[i]);
-						t1 = board1[i][j];
-						board1[i][j] = board1[i][j + 1];
-						board1[i][j + 1] = t1;
-						flag1 = 1;
-						break;
-					}
-					else if (board1[i + 1][j] == blank) {
-						locateObject(object, scene2, boardX1[j], boardY1[i] - move);
-						locateObject(blank, scene2, boardX1[j], boardY1[i]);
-						t1 = board1[i][j];
-						board1[i][j] = board1[i + 1][j];
-						board1[i + 1][j] = t1;
-						flag1 = 1;
-						break;
-					}
-				}
-				else if (i == 1 && j == 1) {
-					if (board1[i - 1][j] == blank) {
-						locateObject(object, scene2, boardX1[j], boardY1[i] + move);
-						locateObject(blank, scene2, boardX1[j], boardY1[i]);
-						t1 = board1[i][j];
-						board1[i][j] = board1[i - 1][j];
-						board1[i - 1][j] = t1;
-						flag1 = 1;
-						break;
-					}
-					else if (board1[i][j + 1] == blank) {
-						locateObject(object, scene2, boardX1[j] + move, boardY1[i]);
-						locateObject(blank, scene2, boardX1[j], boardY1[i]);
-						t1 = board1[i][j];
-						board1[i][j] = board1[i][j + 1];
-						board1[i][j + 1] = t1;
-						flag1 = 1;
-						break;
-					}
-					else if (board1[i + 1][j] == blank) {
-						locateObject(object, scene2, boardX1[j], boardY1[i] - move);
-						locateObject(blank, scene2, boardX1[j], boardY1[i]);
-						t1 = board1[i][j];
-						board1[i][j] = board1[i + 1][j];
-						board1[i + 1][j] = t1;
-						flag1 = 1;
-						break;
-					}
-					else if (board1[i][j - 1] == blank) {
-						locateObject(object, scene2, boardX1[j] - move, boardY1[i]);
-						locateObject(blank, scene2, boardX1[j], boardY1[i]);
-						t1 = board1[i][j];
-						board1[i][j] = board1[i][j - 1];
-						board1[i][j - 1] = t1;
-						flag1 = 1;
-						break;
-					}
-				}
-				else if (i == 1 && j == 2) {
-					if (board1[i - 1][j] == blank) {
-						locateObject(object, scene2, boardX1[j], boardY1[i] + move);
-						locateObject(blank, scene2, boardX1[j], boardY1[i]);
-						t1 = board1[i][j];
-						board1[i][j] = board1[i - 1][j];
-						board1[i - 1][j] = t1;
-						flag1 = 1;
-						break;
-					}
-					else if (board1[i + 1][j] == blank) {
-						locateObject(object, scene2, boardX1[j], boardY1[i] - move);
-						locateObject(blank, scene2, boardX1[j], boardY1[i]);
-						t1 = board1[i][j];
-						board1[i][j] = board1[i + 1][j];
-						board1[i + 1][j] = t1;
-						flag1 = 1;
-						break;
-					}
-					else if (board1[i][j - 1] == blank) {
-						locateObject(object, scene2, boardX1[j] - move, boardY1[i]);
-						locateObject(blank, scene2, boardX1[j], boardY1[i]);
-						t1 = board1[i][j];
-						board1[i][j] = board1[i][j - 1];
-						board1[i][j - 1] = t1;
-						flag1 = 1;
-						break;
-					}
-				}
-
-				else if (i == 2 && j == 0) {
-					if (board1[i - 1][j] == blank) {
-						locateObject(object, scene2, boardX1[j], boardY1[i] + move);
-						locateObject(blank, scene2, boardX1[j], boardY1[i]);
-						t1 = board1[i][j];
-						board1[i][j] = board1[i - 1][j];
-						board1[i - 1][j] = t1;
-						flag1 = 1;
-						break;
-					}
-					else if (board1[i][j + 1] == blank) {
-						locateObject(object, scene2, boardX1[j] + move, boardY1[i]);
-						locateObject(blank, scene2, boardX1[j], boardY1[i]);
-						t1 = board1[i][j];
-						board1[i][j] = board1[i][j + 1];
-						board1[i][j + 1] = t1;
-						flag1 = 1;
-						break;
-					}
-				}
-				else if (i == 2 && j == 1) {
-					if (board1[i - 1][j] == blank) {
-						locateObject(object, scene2, boardX1[j], boardY1[i] + move);
-						locateObject(blank, scene2, boardX1[j], boardY1[i]);
-						t1 = board1[i][j];
-						board1[i][j] = board1[i - 1][j];
-						board1[i - 1][j] = t1;
-						flag1 = 1;
-						break;
-					}
-					else if (board1[i][j + 1] == blank) {
-						locateObject(object, scene2, boardX1[j] + move, boardY1[i]);
-						locateObject(blank, scene2, boardX1[j], boardY1[i]);
-						t1 = board1[i][j];
-						board1[i][j] = board1[i][j + 1];
-						board1[i][j + 1] = t1;
-						flag1 = 1;
-						break;
-					}
-					else if (board1[i][j - 1] == blank) {
-						locateObject(object, scene2, boardX1[j] - move, boardY1[i]);
-						locateObject(blank, scene2, boardX1[j], boardY1[i]);
-						t1 = board1[i][j];
-						board1[i][j] = board1[i][j - 1];
-						board1[i][j - 1] = t1;
-						flag1 = 1;
-						break;
-					}
-				}
-				else if (i == 2 && j == 2) {
-					if (board1[i - 1][j] == blank) {
-						locateObject(object, scene2, boardX1[j], boardY1[i] + move);
-						locateObject(blank, scene2, boardX1[j], boardY1[i]);
-						t1 = board1[i][j];
-						board1[i][j] = board1[i - 1][j];
-						board1[i - 1][j] = t1;
-						flag1 = 1;
-						break;
-					}
-					else if (board1[i][j - 1] == blank) {
-						locateObject(object, scene2, boardX1[j] - move, boardY1[i]);
-						locateObject(blank, scene2, boardX1[j], boardY1[i]);
-						t1 = board1[i][j];
-						board1[i][j] = board1[i][j - 1];
-						board1[i][j - 1] = t1;
-						flag1 = 1;
-						break;
-					}
-				}
-			}
-		}
-	}
-
-	for (int i = 0; i < 3; i++) {
-		if (flag2 == 1) {
-			break;
-		}
-		for (int j = 0; j < 3; j++) {
-			if (object == board2[i][j]) {
-				if (b00 == board2[0][0] && b01 == board2[0][1] && b02 == board2[0][2] && b10 == board2[1][0] && b11 == board2[1][1] && b12 == board2[1][2] && b20 == board2[2][0] && b21 == board2[2][1] && blank2 == board2[2][2]) {
-					endGame();
-				}
-				if (i == 0 && j == 0) {
-					if (board2[i][j + 1] == blank2) {
-						locateObject(object, scene4, board2X[j] + move, board2Y[i]);
-						locateObject(blank2, scene4, board2X[j], board2Y[i]);
-						t2 = board2[i][j];
-						board2[i][j] = board2[i][j + 1];
-						board2[i][j + 1] = t2;
-						flag2 = 1;
-						break;
-					}
-					else if (board2[i + 1][j] == blank2) {
-						locateObject(object, scene4, board2X[j], board2Y[i] - move);
-						locateObject(blank2, scene4, board2X[j], board2Y[i]);
-						t2 = board2[i][j];
-						board2[i][j] = board2[i + 1][j];
-						board2[i + 1][j] = t2;
-						flag2 = 1;
-						break;
-					}
-				}
-				else if (i == 0 && j == 1) {
-					if (board2[i][j - 1] == blank2) {
-						locateObject(object, scene4, board2X[j] - move, board2Y[i]);
-						locateObject(blank2, scene4, board2X[j], board2Y[i]);
-						t2 = board2[i][j];
-						board2[i][j] = board2[i][j - 1];
-						board2[i][j - 1] = t2;
-						flag2 = 1;
-						break;
-					}
-					else if (board2[i][j + 1] == blank2) {
-						locateObject(object, scene4, board2X[j] + move, board2Y[i]);
-						locateObject(blank2, scene4, board2X[j], board2Y[i]);
-						t2 = board2[i][j];
-						board2[i][j] = board2[i][j + 1];
-						board2[i][j + 1] = t2;
-						flag2 = 1;
-						break;
-					}
-					else if (board2[i + 1][j] == blank2) {
-						locateObject(object, scene4, board2X[j], board2Y[i] - move);
-						locateObject(blank2, scene4, board2X[j], board2Y[i]);
-						t2 = board2[i][j];
-						board2[i][j] = board2[i + 1][j];
-						board2[i + 1][j] = t2;
-						flag2 = 1;
-						break;
-					}
-				}
-				else if (i == 0 && j == 2) {
-					if (board2[i][j - 1] == blank2) {
-						locateObject(object, scene4, board2X[j] - move, board2Y[i]);
-						locateObject(blank2, scene4, board2X[j], board2Y[i]);
-						t2 = board2[i][j];
-						board2[i][j] = board2[i][j - 1];
-						board2[i][j - 1] = t2;
-						flag2 = 1;
-						break;
-					}
-					else if (board2[i + 1][j] == blank2) {
-						locateObject(object, scene4, board2X[j], board2Y[i] - move);
-						locateObject(blank2, scene4, board2X[j], board2Y[i]);
-						t2 = board2[i][j];
-						board2[i][j] = board2[i + 1][j];
-						board2[i + 1][j] = t2;
-						flag2 = 1;
-						break;
-					}
-				}
-
-				else if (i == 1 && j == 0) {
-					if (board2[i - 1][j] == blank2) {
-						locateObject(object, scene4, board2X[j], board2Y[i] + move);
-						locateObject(blank2, scene4, board2X[j], board2Y[i]);
-						t2 = board2[i][j];
-						board2[i][j] = board2[i - 1][j];
-						board2[i - 1][j] = t2;
-						flag2 = 1;
-						break;
-					}
-					else if (board2[i][j + 1] == blank2) {
-						locateObject(object, scene4, board2X[j] + move, board2Y[i]);
-						locateObject(blank2, scene4, board2X[j], board2Y[i]);
-						t2 = board2[i][j];
-						board2[i][j] = board2[i][j + 1];
-						board2[i][j + 1] = t2;
-						flag2 = 1;
-						break;
-					}
-					else if (board2[i + 1][j] == blank2) {
-						locateObject(object, scene4, board2X[j], board2Y[i] - move);
-						locateObject(blank2, scene4, board2X[j], board2Y[i]);
-						t2 = board2[i][j];
-						board2[i][j] = board2[i + 1][j];
-						board2[i + 1][j] = t2;
-						flag2 = 1;
-						break;
-					}
-				}
-				else if (i == 1 && j == 1) {
-					if (board2[i - 1][j] == blank2) {
-						locateObject(object, scene4, board2X[j], board2Y[i] + move);
-						locateObject(blank2, scene4, board2X[j], board2Y[i]);
-						t2 = board2[i][j];
-						board2[i][j] = board2[i - 1][j];
-						board2[i - 1][j] = t2;
-						flag2 = 1;
-						break;
-					}
-					else if (board2[i][j + 1] == blank2) {
-						locateObject(object, scene4, board2X[j] + move, board2Y[i]);
-						locateObject(blank2, scene4, board2X[j], board2Y[i]);
-						t2 = board2[i][j];
-						board2[i][j] = board2[i][j + 1];
-						board2[i][j + 1] = t2;
-						flag2 = 1;
-						break;
-					}
-					else if (board2[i + 1][j] == blank2) {
-						locateObject(object, scene4, board2X[j], board2Y[i] - move);
-						locateObject(blank2, scene4, board2X[j], board2Y[i]);
-						t2 = board2[i][j];
-						board2[i][j] = board2[i + 1][j];
-						board2[i + 1][j] = t2;
-						flag2 = 1;
-						break;
-					}
-					else if (board2[i][j - 1] == blank2) {
-						locateObject(object, scene4, board2X[j] - move, board2Y[i]);
-						locateObject(blank2, scene4, board2X[j], board2Y[i]);
-						t2 = board2[i][j];
-						board2[i][j] = board2[i][j - 1];
-						board2[i][j - 1] = t2;
-						flag2 = 1;
-						break;
-					}
-				}
-				else if (i == 1 && j == 2) {
-					if (board2[i - 1][j] == blank2) {
-						locateObject(object, scene4, board2X[j], board2Y[i] + move);
-						locateObject(blank2, scene4, board2X[j], board2Y[i]);
-						t2 = board2[i][j];
-						board2[i][j] = board2[i - 1][j];
-						board2[i - 1][j] = t2;
-						flag2 = 1;
-						break;
-					}
-					else if (board2[i + 1][j] == blank2) {
-						locateObject(object, scene4, board2X[j], board2Y[i] - move);
-						locateObject(blank2, scene4, board2X[j], board2Y[i]);
-						t2 = board2[i][j];
-						board2[i][j] = board2[i + 1][j];
-						board2[i + 1][j] = t2;
-						flag2 = 1;
-						break;
-					}
-					else if (board2[i][j - 1] == blank2) {
-						locateObject(object, scene4, board2X[j] - move, board2Y[i]);
-						locateObject(blank2, scene4, board2X[j], board2Y[i]);
-						t2 = board2[i][j];
-						board2[i][j] = board2[i][j - 1];
-						board2[i][j - 1] = t2;
-						flag2 = 1;
-						break;
-					}
-				}
-
-				else if (i == 2 && j == 0) {
-					if (board2[i - 1][j] == blank2) {
-						locateObject(object, scene4, board2X[j], board2Y[i] + move);
-						locateObject(blank2, scene4, board2X[j], board2Y[i]);
-						t2 = board2[i][j];
-						board2[i][j] = board2[i - 1][j];
-						board2[i - 1][j] = t2;
-						flag2 = 1;
-						break;
-					}
-					else if (board2[i][j + 1] == blank2) {
-						locateObject(object, scene4, board2X[j] + move, board2Y[i]);
-						locateObject(blank2, scene4, board2X[j], board2Y[i]);
-						t2 = board2[i][j];
-						board2[i][j] = board2[i][j + 1];
-						board2[i][j + 1] = t2;
-						flag2 = 1;
-						break;
-					}
-				}
-				else if (i == 2 && j == 1) {
-					if (board2[i - 1][j] == blank2) {
-						locateObject(object, scene4, board2X[j], board2Y[i] + move);
-						locateObject(blank2, scene4, board2X[j], board2Y[i]);
-						t2 = board2[i][j];
-						board2[i][j] = board2[i - 1][j];
-						board2[i - 1][j] = t2;
-						flag2 = 1;
-						break;
-					}
-					else if (board2[i][j + 1] == blank2) {
-						locateObject(object, scene4, board2X[j] + move, board2Y[i]);
-						locateObject(blank2, scene4, board2X[j], board2Y[i]);
-						t2 = board2[i][j];
-						board2[i][j] = board2[i][j + 1];
-						board2[i][j + 1] = t2;
-						flag2 = 1;
-						break;
-					}
-					else if (board2[i][j - 1] == blank2) {
-						locateObject(object, scene4, board2X[j] - move, board2Y[i]);
-						locateObject(blank2, scene4, board2X[j], board2Y[i]);
-						t2 = board2[i][j];
-						board2[i][j] = board2[i][j - 1];
-						board2[i][j - 1] = t2;
-						flag2 = 1;
-						break;
-					}
-				}
-				else if (i == 2 && j == 2) {
-					if (board2[i - 1][j] == blank2) {
-						locateObject(object, scene4, board2X[j], board2Y[i] + move);
-						locateObject(blank2, scene4, board2X[j], board2Y[i]);
-						t2 = board2[i][j];
-						board2[i][j] = board2[i - 1][j];
-						board2[i - 1][j] = t2;
-						flag2 = 1;
-						break;
-					}
-					else if (board2[i][j - 1] == blank2) {
-						locateObject(object, scene4, board2X[j] - move, board2Y[i]);
-						locateObject(blank2, scene4, board2X[j], board2Y[i]);
-						t2 = board2[i][j];
-						board2[i][j] = board2[i][j - 1];
-						board2[i][j - 1] = t2;
-						flag2 = 1;
-						break;
-					}
-				}
-			}
-		}
-	}
-}
-
-int main() {
-
+int main() 
+{
 	setGameOption(GameOption::GAME_OPTION_INVENTORY_BUTTON, false);
 	setGameOption(GameOption::GAME_OPTION_MESSAGE_BOX_BUTTON, false);
 
-	std::vector<int> v1 = { 365, 545, 725 };
-	std::vector<int> k1 = { 440, 260, 80 };
-	std::random_device rd1;
-	std::mt19937 g1(rd1());
-	std::shuffle(v1.begin(), v1.end(), g1);
-	std::shuffle(k1.begin(), k1.end(), g1);
+	srand((unsigned int)time(NULL)); // 랜덤함수 초기화
+	time_t start_time;
+	time_t start_time1;
 
-	scene1 = createScene("SlidePuzzle", "Images/루피.png");
-	scene2 = createScene("Level-1", "Images/루피배경.png");
-	scene3 = createScene("Level-2", "Images/조로.png");
-	scene4 = createScene("Level-2", "Images/조로배경.png");
+	
+	auto scene = Scene::create("slide puzzle", "Images/루피.png");
+	auto scene1 = Scene::create("Level 1", "Images/루피배경.png");  
+	auto scene2 = Scene::create("Level 2", "Images/조로.png");
+	auto scene3 = Scene::create("Level 2", "Images/조로배경.png");
 
-	start = createObject("start", "Images/start.png", scene1, 590, 70, true);
-	a00 = createObject("a00", "Images/00.png", scene2, v1[0], k1[0], true);
-	a01 = createObject("a01", "Images/01.png", scene2, v1[1], k1[0], true);
-	a02 = createObject("a02", "Images/02.png", scene2, v1[2], k1[0], true);
-	a10 = createObject("a10", "Images/10.png", scene2, v1[0], k1[1], true);
-	a11 = createObject("a11", "Images/11.png", scene2, v1[1], k1[1], true);
-	a12 = createObject("a12", "Images/12.png", scene2, v1[2], k1[1], true);
-	a20 = createObject("a20", "Images/20.png", scene2, v1[0], k1[2], true);
-	a21 = createObject("a21", "Images/21.png", scene2, v1[1], k1[2], true);
-	blank = createObject("blank", "Images/blank.png", scene2, v1[2], k1[2], true);
 
-	for (int i = 0; i < 3; i++) {
-		for (int j = 0; j < 3; j++) {
-			if (v1[0] == boardX1[i] && k1[0] == boardY1[j]) {
-				board1[j][i] = a00;
-			}
-			else if (v1[1] == boardX1[i] && k1[0] == boardY1[j]) {
-				board1[j][i] = a01;
-			}
-			else if (v1[2] == boardX1[i] && k1[0] == boardY1[j]) {
-				board1[j][i] = a02;
-			}
-			else if (v1[0] == boardX1[i] && k1[1] == boardY1[j]) {
-				board1[j][i] = a10;
-			}
-			else if (v1[1] == boardX1[i] && k1[1] == boardY1[j]) {
-				board1[j][i] = a11;
-			}
-			else if (v1[2] == boardX1[i] && k1[1] == boardY1[j]) {
-				board1[j][i] = a12;
-			}
-			else if (v1[0] == boardX1[i] && k1[2] == boardY1[j]) {
-				board1[j][i] = a20;
-			}
-			else if (v1[1] == boardX1[i] && k1[2] == boardY1[j]) {
-				board1[j][i] = a21;
-			}
-			else if (v1[2] == boardX1[i] && k1[2] == boardY1[j]) {
-				board1[j][i] = blank;
-			}
+	auto restart_button = Object::create("Images/restart.png", scene1, 100, 40, false);
+	auto restart_button1 = Object::create("Images/restart.png", scene3, 100, 40, false);
+	auto next_button = Object::create("Images/next.png", scene1, 1100, 40, false);
+	auto finish_button = Object::create("Images/finish.png", scene3, 1100, 40, false);
 
-		}
+	ObjectPtr board[9]; // 3 X 3 퍼즐 보드 생성
+	ObjectPtr boardA[9]; // 체크할 보드 생성
+
+	int blank = 8; // 빈공간 위치
+	int blank1 = 8;
+	for (int i = 0; i < 9; i++) {
+		string filename = "Images/" + to_string(i + 1) + ".png";
+		cout << filename << endl;
+
+		board[i] = Object::create(filename, scene1, 365 + (i % 3) * 180, 440 - (i / 3) * 180);
+		boardA[i] = board[i];
+		board[i]->setOnMouseCallback([&](ObjectPtr object, int, int, MouseAction)->bool { // i값을 안쓰기 때문에 =가 아닌 &를 사용
+			int j;
+			for (j = 0; j < 9; j++) {
+				if (board[j] == object)
+					break;
+			} 
+			// 마우스 클릭시 blank의 상하좌우끼리만 바꿀수 있는 조건문 추가
+			if ((j%3 > 0 && j-1 == blank) || (j%3 < 2 && j+1 == blank) || (j>2 && j-3 == blank) || (j<6 && j+3 == blank)){
+				// 마우스 클릭시 화면의 이미지 바꿈
+				board[j]->locate(scene1, 365 + (blank % 3) * 180, 440 - (blank / 3) * 180);
+				board[blank]->locate(scene1, 365 + (j % 3) * 180, 440 - (j / 3) * 180);
+
+				// board의 array를 바꿈
+				board[j] = board[blank];
+				board[blank] = object;
+				blank = j;
+
+				// 퍼즐 완성되는 루프
+				int k;
+				for (k = 0; k < 9; k++) {
+					if (board[k] != boardA[k]) break;
+				}
+				if (k == 9) { // 처음퍼즐 완료
+					auto end_time = time(NULL);
+					cout << difftime(end_time, start_time) << endl;
+					string buf = to_string(difftime(end_time, start_time)) + "초 걸렸습니다.";
+					showMessage(buf.c_str());
+					restart_button->show();
+					next_button->show();
+				}
+			}
+			return true;
+		});
 	}
 
-	std::vector<int> v2 = { 372, 552, 732 };
-	std::vector<int> k2 = { 445, 265, 85 };
-	std::random_device rd2;
-	std::mt19937 g2(rd2());
-	std::shuffle(v2.begin(), v2.end(), g2);
-	std::shuffle(k2.begin(), k2.end(), g2);
+	ObjectPtr board1[9]; // 2번쨰 퍼즐 보드 생성
+	ObjectPtr boardA1[9]; // 체크할 보드 생성
+	for (int a = 0; a < 9; a++) {
+		string filename1 = "Images1/" + to_string(a + 1) + ".png";
+		cout << filename1 << endl;
 
-	start1 = createObject("start1", "Images/start.png", scene3, 590, 70, true);
-	b00 = createObject("b00", "Images/b00.png", scene4, v2[0], k2[0], true);
-	b01 = createObject("b01", "Images/b01.png", scene4, v2[1], k2[0], true);
-	b02 = createObject("b02", "Images/b02.png", scene4, v2[2], k2[0], true);
-	b10 = createObject("b10", "Images/b10.png", scene4, v2[0], k2[1], true);
-	b11 = createObject("b11", "Images/b11.png", scene4, v2[1], k2[1], true);
-	b12 = createObject("b12", "Images/b12.png", scene4, v2[2], k2[1], true);
-	b20 = createObject("b20", "Images/b20.png", scene4, v2[0], k2[2], true);
-	b21 = createObject("b21", "Images/b21.png", scene4, v2[1], k2[2], true);
-	blank2 = createObject("blank2", "Images/blank.png", scene4, v2[2], k2[2], true);
+		board1[a] = Object::create(filename1, scene3, 372 + (a % 3) * 180, 445 - (a / 3) * 180);
+		boardA1[a] = board1[a];
+		board1[a]->setOnMouseCallback([&](ObjectPtr object, int, int, MouseAction)->bool {
+			int j;
+			for (j = 0; j < 9; j++) {
+				if (board1[j] == object)
+					break;
+			}
+			if ((j % 3 > 0 && j - 1 == blank1) || (j % 3 < 2 && j + 1 == blank1) || (j > 2 && j - 3 == blank1) || (j < 6 && j + 3 == blank1)) {
+				board1[j]->locate(scene3, 372 + (blank1 % 3) * 180, 445 - (blank1 / 3) * 180);
+				board1[blank1]->locate(scene3, 372 + (j % 3) * 180, 445 - (j / 3) * 180);
+				board1[j] = board1[blank1];
+				board1[blank1] = object;
+				blank1 = j;
 
-	for (int i = 0; i < 3; i++) {
-		for (int j = 0; j < 3; j++) {
-			if (v2[0] == board2X[i] && k2[0] == board2Y[j]) {
-				board2[j][i] = b00;
+				int k;
+				for (k = 0; k < 9; k++) {
+					if (board1[k] != boardA1[k]) break;
+				}
+				if (k == 9) { 
+					auto end_time1 = time(NULL);
+					cout << difftime(end_time1, start_time1) << endl;
+					string buf1 = to_string(difftime(end_time1, start_time1)) + "초 경과.";
+					showMessage(buf1.c_str());
+					restart_button1->show();
+					finish_button->show();
+				}
 			}
-			else if (v2[1] == board2X[i] && k2[0] == board2Y[j]) {
-				board2[j][i] = b01;
-			}
-			else if (v2[2] == board2X[i] && k2[0] == board2Y[j]) {
-				board2[j][i] = b02;
-			}
-			else if (v2[0] == board2X[i] && k2[1] == board2Y[j]) {
-				board2[j][i] = b10;
-			}
-			else if (v2[1] == board2X[i] && k2[1] == board2Y[j]) {
-				board2[j][i] = b11;
-			}
-			else if (v2[2] == board2X[i] && k2[1] == board2Y[j]) {
-				board2[j][i] = b12;
-			}
-			else if (v2[0] == board2X[i] && k2[2] == board2Y[j]) {
-				board2[j][i] = b20;
-			}
-			else if (v2[1] == board2X[i] && k2[2] == board2Y[j]) {
-				board2[j][i] = b21;
-			}
-			else if (v2[2] == board2X[i] && k2[2] == board2Y[j]) {
-				board2[j][i] = blank2;
-			}
-
-		}
+			return true;
+			});
 	}
 
-	restart = createObject("restart", "Images/restart.png", scene2, 100, 40, true);
-	restart1 = createObject("restart", "Images/restart.png", scene4, 100, 40, true);
-	next = createObject("next", "images/next.png", scene2, 1100, 40, true);
+	board[blank]->hide();
+	board1[blank1]->hide();
 
-	setMouseCallback(mouseCallback);
-	timer = createTimer(600.0f);
-	showTimer(timer);
+	// 타이머 루프를 이용하여 퍼즐 섞기
+	auto count = 0;
+	auto timer = Timer::create(0.05f);
+	timer->setOnTimerCallback([&](TimerPtr timer1)->bool {
+		cout << "timeout!!" << count << endl;
+		
+		int j = 0;
+		do {
+			switch (rand() % 4) { // 네가지 방향으로 움직임
+			case 0: j = blank - 1; break; // 좌
+			case 1: j = blank + 1; break; // 우
+			case 2: j = blank - 3; break; // 하
+			case 3: j = blank + 3; break; // 상
+			}
+		}
+		// 움직이기 위한 조건-> j값이 board 안에 있도록 추가
+		while (j < 0 || j > 8 || !((j % 3 > 0 && j - 1 == blank) || (j % 3 < 2 && j + 1 == blank) || (j > 2 && j - 3 == blank) || (j < 6 && j + 3 == blank)));
+		board[j]->locate(scene1, 365 + (blank % 3) * 180, 440 - (blank / 3) * 180);
+		board[blank]->locate(scene1, 365 + (j % 3) * 180, 440 - (j / 3) * 180);
+		auto object = board[j]; // 없던 object 변수 생성
+		board[j] = board[blank];
+		board[blank] = object;
+		blank = j;
 
+		count++;
+		if (count < 5) {
+			timer1->set(0.05f);
+			timer1->start();
+		}
+		return true;
+	 });
 
-	startGame(scene1);
+	// start 버튼으로 게임시작
+	auto start_button = Object::create("Images/start.png", scene, 590, 50);
+	start_button->setOnMouseCallback([&](ObjectPtr object, int x, int y, MouseAction action)->bool {
+		scene1->enter();
+		timer->start();
+		start_time = time(NULL);
+		return true;
+	});
+	
+	// 재시작 버튼 -> 시간 초기화
+	restart_button->setOnMouseCallback([&](ObjectPtr object, int x, int y, MouseAction action)->bool {
+		scene1->enter();
+		count = 0;
+		timer->start();
+		start_time = time(NULL);
+		return true;
+	});
+
+	// 다음 퍼즐
+	next_button->setOnMouseCallback([&](ObjectPtr object, int x, int y, MouseAction action)->bool {
+		scene2->enter();
+		return true;
+	});
+
+	// 다음 퍼즐 타이머 루프
+	auto count1 = 0;
+	auto timer_A = Timer::create(0.05f);
+	timer_A->setOnTimerCallback([&](TimerPtr timer2)->bool {
+		cout << "timeout!!" << count << endl;
+		int b = 0;
+		do {
+			switch (rand() % 4) { 
+			case 0: b = blank1 - 1; break; // 좌
+			case 1: b = blank1 + 1; break; // 우
+			case 2: b = blank1 - 3; break; // 하
+			case 3: b = blank1 + 3; break; // 상
+			}
+		}
+		while (b < 0 || b > 8 || !((b % 3 > 0 && b - 1 == blank1) || (b % 3 < 2 && b + 1 == blank1) || (b > 2 && b - 3 == blank1) || (b < 6 && b + 3 == blank1)));
+		board1[b]->locate(scene3, 372 + (blank1 % 3) * 180, 445 - (blank1 / 3) * 180);
+		board1[blank1]->locate(scene3, 372 + (b % 3) * 180, 445 - (b / 3) * 180);
+		auto object_A = board1[b]; 
+		board1[b] = board1[blank1];
+		board1[blank1] = object_A;
+		blank1 = b;
+
+		count++;
+		if (count < 5) {
+			timer2->set(0.05f);
+			timer2->start();
+		}
+		return true;
+	});
+
+	// 두번째 퍼즐 시작
+	auto start_button1 = Object::create("Images/start.png", scene2, 590, 40);
+	start_button1->setOnMouseCallback([&](ObjectPtr object, int x, int y, MouseAction action)->bool {
+		scene3->enter();
+		count = 0;
+		timer_A->start();
+		start_time1 = time(NULL);
+		return true;
+		});
+
+	// 두번째 퍼즐 재시작 -> 시간 초기화
+	restart_button1->setOnMouseCallback([&](ObjectPtr object, int x, int y, MouseAction action)->bool {
+		scene3->enter();
+		count = 0;
+		timer_A->start();
+		start_time1 = time(NULL);
+		return true;
+		});
+
+	// 게임끝
+	finish_button->setOnMouseCallback([&](ObjectPtr object, int x, int y, MouseAction action)->bool {
+		endGame();
+		return true;
+		});
+
+	startGame(scene);
+
+	return 0;
+
 }
